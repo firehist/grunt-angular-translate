@@ -2,6 +2,7 @@ angular.module( 'titleService', [])
 
 .factory( 'titleService', function ( $document, $translate ) {
   var suffix = $translate( 'mySuffix ---' ),
+      suffix2 = $translate("mySuffix2 ---"),
       title;
   
   var titleService = {
