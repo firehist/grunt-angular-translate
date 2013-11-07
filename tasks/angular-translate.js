@@ -171,8 +171,8 @@ module.exports = function ( grunt ) {
       filterRegexSimple     = /{{\s*'((?:\\.|[^'\\])*)'\s*\|\s*translate(?:[^}]*)}}/gi,
       // Use to match <a href="#" translate>TRANSLATION</a>
       directiveRegex  = /<[^>]*translate[^{>]*>([^<]*)<\/[^>]*>/gi,
-      // Use to match $translate('TRANSLATION')
-      javascriptRegex = /\$translate\([^'"]['"]([^'"]*)['"][^'"]*\)/gi,
+      // Use to match $translate('TRANSLATION') or $translate('TRANSLATION',
+      javascriptRegex = /\$translate\(\s*['"](.*?[\S].*?)['"][),]/gi,
       // Used to match $filter("translate")("TRANSLATION")
       javascriptRegex2 = /\$filter\(\s*['"]translate['"]\s*\)\s*\(\s*['"](.*[\S].*)['"]\s*\)/gi;
 };
