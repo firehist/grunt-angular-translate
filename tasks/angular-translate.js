@@ -70,6 +70,10 @@ module.exports = function (grunt) {
               }
               translationKey = r[1].trim();
               break;
+            case 'JavascriptServiceSimpleQuote':
+            case 'JavascriptServiceDoubleQuote':
+              translationKey = r[2].trim();
+              break;
             default:
               translationKey = r[1].trim();
           }
@@ -105,8 +109,8 @@ module.exports = function (grunt) {
       HtmlDirectivePluralLast: 'translate="((?:\\\\.|[^"\\\\])*)".*angular-plural-extract="((?:\\\\.|[^"\\\\])*)"',
       HtmlDirectivePluralFirst: 'angular-plural-extract="((?:\\\\.|[^"\\\\])*)".*translate="((?:\\\\.|[^"\\\\])*)"',
       HtmlNgBindHtml: 'ng-bind-html="\\s*\'((?:\\\\.|[^\'\\\\])*)\'\\s*\\|\\s*translate(:.*?)?\\s*"',
-      JavascriptServiceSimpleQuote: '\\$translate\\(\\s*\'((?:\\\\.|[^\'\\\\])*)\'[^\\)]*\\)',
-      JavascriptServiceDoubleQuote: '\\$translate\\(\\s*"((?:\\\\.|[^"\\\\])*)"[^\\)]*\\)',
+      JavascriptServiceSimpleQuote: '\\$(translate\.instant|translate)\\(\\s*\'((?:\\\\.|[^\'\\\\])*)\'[^\\)]*\\)',
+      JavascriptServiceDoubleQuote: '\\$(translate\.instant|translate)\\(\\s*"((?:\\\\.|[^"\\\\])*)"[^\\)]*\\)',
       JavascriptFilterSimpleQuote: '\\$filter\\(\\s*\'translate\'\\s*\\)\\s*\\(\\s*\'((?:\\\\.|[^\'\\\\])*)\'[^\\)]*\\)',
       JavascriptFilterDoubleQuote: '\\$filter\\(\\s*"translate"\\s*\\)\\s*\\(\\s*"((?:\\\\.|[^"\\\\\])*)"[^\\)]*\\)'
     };
