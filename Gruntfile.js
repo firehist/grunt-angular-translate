@@ -263,6 +263,18 @@ module.exports = function(grunt) {
       },
 
       /**
+       * Test case: Ternary operation between translates
+       */
+      ternary_operation_in_between: {
+        prefix:   '14_',
+        suffix:   '.json',
+        src: ['test/fixtures/ternary_operation_in_between.html'],
+        lang: ['en_US'],
+        dest: 'tmp',
+        keyAsText: true
+      },
+
+      /**
        * Test case: POT adapter
        */
       extract_to_pot: {
