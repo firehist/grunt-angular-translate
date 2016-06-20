@@ -140,7 +140,7 @@ module.exports = function (grunt) {
           var defaultValueByTranslationKey = function (translationKey, translationDefaultValue) {
             if (regexName !== "JavascriptServiceArraySimpleQuote" &&
               regexName !== "JavascriptServiceArrayDoubleQuote") {
-              if (keyAsText === true && translationDefaultValue.length === 0) {
+              if (keyAsText === true && translationDefaultValue && translationDefaultValue.length === 0) {
                 results[translationKey] = translationKey;
               } else {
                 results[translationKey] = translationDefaultValue;
