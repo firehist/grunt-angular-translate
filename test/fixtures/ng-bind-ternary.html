@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<p ng-bind-html="'var1' | translate"></p>
+
+<p><span ng-bind-html="'var2' | translate"></p>
+
+<p><span ng-bind-html="condition ? 'var3': 'var4'  | translate"></p>
+
+<ul>
+    <li>
+        {{"var5" | translate}}</p>
+    </li>
+ </ul>
+
+<p><span ng-bind-html="'var6' | translate"></p>
+
+
+</body>
+</html>

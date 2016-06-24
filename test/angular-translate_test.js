@@ -184,7 +184,16 @@ exports.i18nextract = {
     test.done();
   },
 
-  extract_to_pot: function(test) {
+  ng_bind_ternary: function(test) {
+    test.expect(1);
+
+    var actual = grunt.file.read( 'tmp/15_en_US.json' );
+    var expected = grunt.file.read( 'test/expected/15_en_US.json' );
+    test.equal( actual, expected, ': ng_bind_ternary: 15_en_US.json should equal.' );
+    test.done();
+  },
+
+  /*extract_to_pot: function(test) {
     test.expect(1);
 
     var actual = grunt.file.read( 'tmp/template.pot' );
@@ -192,6 +201,6 @@ exports.i18nextract = {
     test.equal( actual, expected, 'Should equal.' );
 
     test.done();
-  }
+  }*/
 
 };

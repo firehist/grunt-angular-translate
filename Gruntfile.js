@@ -265,6 +265,7 @@ module.exports = function(grunt) {
       /**
        * Test case: Ternary operation between translates
        */
+
       ternary_operation_in_between: {
         prefix:   '14_',
         suffix:   '.json',
@@ -274,16 +275,24 @@ module.exports = function(grunt) {
         keyAsText: true
       },
 
+      ng_bind_ternary: {
+        prefix:   '15_',
+        suffix:   '.json',
+        src: ['test/fixtures/ng-bind-ternary.html'],
+        lang: ['en_US'],
+        dest: 'tmp'
+      },
+
       /**
        * Test case: POT adapter
        */
-      extract_to_pot: {
+      /*extract_to_pot: {
         adapter:  'pot',
         prefix:   'template',
         src:      [ 'test/fixtures/index.html', 'test/fixtures/index_key_as_text.html', 'test/fixtures/index_namespace.html', 'test/fixtures/index_namespace_consistent_output.html', 'test/fixtures/*.js', '!test/fixtures/links.js', '!test/fixtures/index_key_as_text.html'  ],
         lang:     [ '' ],
         dest:     'tmp'
-      }
+      } */
     },
 
     // Unit tests.

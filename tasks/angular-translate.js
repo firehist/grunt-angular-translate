@@ -56,7 +56,6 @@ module.exports = function (grunt) {
       _log.debug(regex);
       regex.lastIndex = 0;
       while ((r = regex.exec(content)) !== null) {
-
         // Result expected [STRING, KEY, SOME_REGEX_STUF]
         // Except for plural hack [STRING, KEY, ARRAY_IN_STRING]
         if (r.length >= 2) {
@@ -174,8 +173,8 @@ module.exports = function (grunt) {
       HtmlDirectiveDoubleQuote: '<(?:[^>"]|"(?:[^"]|\\/")*")*\\stranslate="([^"]*)"[^>]*>([^<]*)',
       HtmlDirectivePluralLast: 'translate="((?:\\\\.|[^"\\\\])*)".*angular-plural-extract="((?:\\\\.|[^"\\\\])*)"',
       HtmlDirectivePluralFirst: 'angular-plural-extract="((?:\\\\.|[^"\\\\])*)".*translate="((?:\\\\.|[^"\\\\])*)"',
-      HtmlNgBindHtml: 'ng-bind-html="\\s*\'((?:\\\\.|[^\'\\\\])*)\'\\s*\\|\\s*translate(:.*?)?\\s*"',
-      HtmlNgBindHtmlTernary: 'ng-bind-html="\\s*([^?]*?[^:]*:[^|}]*)\\s*\\|\\s*translate(:.*?)?\\s*"',
+      HtmlNgBindHtml: '(?:ng-bind-html|compile)="\\s*\'((?:\\\\.|[^\'\\\\])*)\'\\s*\\|\\s*translate(:.*?)?\\s*"',
+      HtmlNgBindHtmlTernary: 'ng-bind-html="\\s*((?:[^?"]|\\\\")*?(?:[^:"]|\\\\")*:(?:[^|}]|\\\\")*)\\s*\\|\\s*translate(:.*?)?\\s*"',
       JavascriptServiceSimpleQuote: '\\$translate\\(\\s*\'((?:\\\\.|[^\'\\\\])*)\'[^\\)]*\\)',
       JavascriptServiceDoubleQuote: '\\$translate\\(\\s*"((?:\\\\.|[^"\\\\])*)"[^\\)]*\\)',
       JavascriptServiceArraySimpleQuote: '\\$translate\\((?:\\s*(\\[\\s*(?:(?:\'(?:(?:\\.|[^.*\'\\\\])*)\')\\s*,*\\s*)+\\s*\\])\\s*)\\)',
