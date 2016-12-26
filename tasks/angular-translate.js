@@ -196,17 +196,22 @@ module.exports = function (grunt) {
 
     var _extractTernaryKey = function (key) {
       var delimiterRegexp = new RegExp('(' + escapeRegExp(interpolation.startDelimiter) + ')|(' + escapeRegExp(interpolation.endDelimiter) + ')', 'g')
-      var ternarySimpleQuoteRegexp = new RegExp('([^?]*)\\?(?:\\s*\'((?:\\\\.|[^\'\\\\])*)\'\\s*):\\s*\'((?:\\\\.|[^\'\\\\])*)\'\\s*')
-      var ternaryDoubleQuoteRegexp = new RegExp('([^?]*)\\?(?:\\s*"((?:\\\\.|[^"\\\\])*)"\\s*):\\s*"((?:\\\\.|[^"\\\\])*)"\\s*')
-
+      
+      
+      var ternaryRegexp = /(?:[^?]*)\?(?:\s*(?:["\']((?:\\.|[^"\\])*)["\']|[a-zA-Z0-9_\-]+)\s*):\s*(?:["\']((?:\\.|[^"\\])*)["\']|[a-zA-Z0-9_\-]+)\s*/i
+      
       var cleanKey = key.replace(delimiterRegexp, '');
-      var match = cleanKey.match(ternaryDoubleQuoteRegexp);
-      if (!match) {
-        match = cleanKey.match(ternarySimpleQuoteRegexp);
-      }
-
-      if (match && match.length > 3) {
-        return [match[2], match[3]]
+      var match = cleanKey.match(ternaryRegexp);
+     
+      if (match) {
+        var matches = [];
+        if (match.length >= 2 && match[1]) {
+          matches.push(match[1]);
+        }
+        if (match.length >= 3 && match[2]) {
+          matches.push(match[2]);
+        }
+        return matches
       }
       return null
     };

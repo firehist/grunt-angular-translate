@@ -193,6 +193,16 @@ exports.i18nextract = {
     test.done();
   },
 
+  ternary_operation_variable_and_string: function(test) {
+    test.expect(1);
+
+    var actual = grunt.file.read( 'tmp/16_en_US.json' );
+    var expected = grunt.file.read( 'test/expected/16_en_US.json' );
+    test.equal( actual, expected, ': ternary_operation_variable_and_string: 16_en_US.json should equal.' );
+    
+    test.done();
+  },
+
   /*extract_to_pot: function(test) {
     test.expect(1);
 

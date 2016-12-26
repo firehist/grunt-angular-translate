@@ -283,6 +283,17 @@ module.exports = function(grunt) {
         dest: 'tmp'
       },
 
+      ternary_operation_variable_and_string: {
+        prefix:   '16_',
+        suffix:   '.json',
+        src: ['test/fixtures/ternary_operation_variable_and_string.html'],
+        lang: ['en_US'],
+        dest: 'tmp',
+        keyAsText: true
+      },
+
+
+
       /**
        * Test case: POT adapter
        */
