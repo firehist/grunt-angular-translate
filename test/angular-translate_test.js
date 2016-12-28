@@ -174,7 +174,36 @@ exports.i18nextract = {
     test.done();
   },
 
-  extract_to_pot: function(test) {
+  ternary_operation_in_between: function(test) {
+    test.expect(1);
+
+    var actual = grunt.file.read( 'tmp/14_en_US.json' );
+    var expected = grunt.file.read( 'test/expected/14_en_US.json' );
+    test.equal( actual, expected, ': ternary_operation_in_between: 14_en_US.json should equal.' );
+
+    test.done();
+  },
+
+  ng_bind_ternary: function(test) {
+    test.expect(1);
+
+    var actual = grunt.file.read( 'tmp/15_en_US.json' );
+    var expected = grunt.file.read( 'test/expected/15_en_US.json' );
+    test.equal( actual, expected, ': ng_bind_ternary: 15_en_US.json should equal.' );
+    test.done();
+  },
+
+  ternary_operation_variable_and_string: function(test) {
+    test.expect(1);
+
+    var actual = grunt.file.read( 'tmp/16_en_US.json' );
+    var expected = grunt.file.read( 'test/expected/16_en_US.json' );
+    test.equal( actual, expected, ': ternary_operation_variable_and_string: 16_en_US.json should equal.' );
+    
+    test.done();
+  },
+
+  /*extract_to_pot: function(test) {
     test.expect(1);
 
     var actual = grunt.file.read( 'tmp/template.pot' );
@@ -182,6 +211,6 @@ exports.i18nextract = {
     test.equal( actual, expected, 'Should equal.' );
 
     test.done();
-  }
+  }*/
 
 };

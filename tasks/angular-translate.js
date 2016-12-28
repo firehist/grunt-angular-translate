@@ -56,7 +56,6 @@ module.exports = function (grunt) {
       _log.debug(regex);
       regex.lastIndex = 0;
       while ((r = regex.exec(content)) !== null) {
-
         // Result expected [STRING, KEY, SOME_REGEX_STUF]
         // Except for plural hack [STRING, KEY, ARRAY_IN_STRING]
         if (r.length >= 2) {
@@ -140,7 +139,7 @@ module.exports = function (grunt) {
           var defaultValueByTranslationKey = function (translationKey, translationDefaultValue) {
             if (regexName !== "JavascriptServiceArraySimpleQuote" &&
               regexName !== "JavascriptServiceArrayDoubleQuote") {
-              if (keyAsText === true && translationDefaultValue.length === 0) {
+              if (keyAsText === true && typeof translationDefaultValue !== "undefined" && translationDefaultValue.length === 0) {
                 results[translationKey] = translationKey;
               } else {
                 results[translationKey] = translationDefaultValue;
@@ -152,7 +151,7 @@ module.exports = function (grunt) {
           var ternaryKeys = _extractTernaryKey(translationKey)
           if (ternaryKeys) {
             _.forEach(ternaryKeys, function(v) {
-              defaultValueByTranslationKey(v);
+              defaultValueByTranslationKey(v, translationDefaultValue);
             });
           } else {
             defaultValueByTranslationKey(translationKey, translationDefaultValue);
@@ -168,14 +167,14 @@ module.exports = function (grunt) {
       commentDoubleQuote: '\\/\\*\\s*i18nextract\\s*\\*\\/"((?:\\\\.|[^"\\\\])*)"',
       HtmlFilterSimpleQuote: escapeRegExp(interpolation.startDelimiter) + '\\s*(?:::)?\'((?:\\\\.|[^\'\\\\])*)\'\\s*\\|\\s*translate(:.*?)?\\s*' + escapeRegExp(interpolation.endDelimiter),
       HtmlFilterDoubleQuote: escapeRegExp(interpolation.startDelimiter) + '\\s*(?:::)?"((?:\\\\.|[^"\\\\\])*)"\\s*\\|\\s*translate(:.*?)?\\s*' + escapeRegExp(interpolation.endDelimiter),
-      HtmlFilterTernary: escapeRegExp(interpolation.startDelimiter) + '\\s*(?:::)?([^?]*\\?[^:]*:[^|}]*)\\s*\\|\\s*translate(:.*?)?\\s*' + escapeRegExp(interpolation.endDelimiter),
+      HtmlFilterTernary: escapeRegExp(interpolation.startDelimiter) + '\\s*([^?}]*[^?]{0,1}[^?}]*\\?[^:}]*[^:]{0,1}[^:}]*:[^|}]*[^|]{0,1}[^|}]*)\\s*\\|\\s*translate(:.*?)?\\s*' + escapeRegExp(interpolation.endDelimiter),
       HtmlDirective: '<(?:[^>"]|"(?:[^"]|\\/")*")*\\stranslate(?:>|\\s[^>]*>)([^<]*)',
       HtmlDirectiveSimpleQuote: '<(?:[^>"]|"(?:[^"]|\\/")*")*\\stranslate=\'([^\']*)\'[^>]*>([^<]*)',
       HtmlDirectiveDoubleQuote: '<(?:[^>"]|"(?:[^"]|\\/")*")*\\stranslate="([^"]*)"[^>]*>([^<]*)',
       HtmlDirectivePluralLast: 'translate="((?:\\\\.|[^"\\\\])*)".*angular-plural-extract="((?:\\\\.|[^"\\\\])*)"',
       HtmlDirectivePluralFirst: 'angular-plural-extract="((?:\\\\.|[^"\\\\])*)".*translate="((?:\\\\.|[^"\\\\])*)"',
-      HtmlNgBindHtml: 'ng-bind-html="\\s*\'((?:\\\\.|[^\'\\\\])*)\'\\s*\\|\\s*translate(:.*?)?\\s*"',
-      HtmlNgBindHtmlTernary: 'ng-bind-html="\\s*([^?]*?[^:]*:[^|}]*)\\s*\\|\\s*translate(:.*?)?\\s*"',
+      HtmlNgBindHtml: '(?:ng-bind-html|compile)="\\s*\'((?:\\\\.|[^\'\\\\])*)\'\\s*\\|\\s*translate(:.*?)?\\s*"',
+      HtmlNgBindHtmlTernary: 'ng-bind-html="\\s*((?:[^?"]|\\\\")*?(?:[^:"]|\\\\")*:(?:[^|}]|\\\\")*)\\s*\\|\\s*translate(:.*?)?\\s*"',
       JavascriptServiceSimpleQuote: '\\$translate\\(\\s*\'((?:\\\\.|[^\'\\\\])*)\'[^\\)]*\\)',
       JavascriptServiceDoubleQuote: '\\$translate\\(\\s*"((?:\\\\.|[^"\\\\])*)"[^\\)]*\\)',
       JavascriptServiceArraySimpleQuote: '\\$translate\\((?:\\s*(\\[\\s*(?:(?:\'(?:(?:\\.|[^.*\'\\\\])*)\')\\s*,*\\s*)+\\s*\\])\\s*)\\)',
@@ -197,17 +196,22 @@ module.exports = function (grunt) {
 
     var _extractTernaryKey = function (key) {
       var delimiterRegexp = new RegExp('(' + escapeRegExp(interpolation.startDelimiter) + ')|(' + escapeRegExp(interpolation.endDelimiter) + ')', 'g')
-      var ternarySimpleQuoteRegexp = new RegExp('([^?]*)\\?(?:\\s*\'((?:\\\\.|[^\'\\\\])*)\'\\s*):\\s*\'((?:\\\\.|[^\'\\\\])*)\'\\s*')
-      var ternaryDoubleQuoteRegexp = new RegExp('([^?]*)\\?(?:\\s*"((?:\\\\.|[^"\\\\])*)"\\s*):\\s*"((?:\\\\.|[^"\\\\])*)"\\s*')
-
+      
+      var ternaryRegexp = /(?:[^?]*)\?(?:\s*(?:(["\'])((?:[^\1])*)\1|[a-zA-Z0-9_\-\.]+)\s*):\s*(?:(["\'])((?:\\.|[^\3])*)\3|[a-zA-Z0-9_\-\.]+)\s*/i
+    
+      
       var cleanKey = key.replace(delimiterRegexp, '');
-      var match = cleanKey.match(ternaryDoubleQuoteRegexp);
-      if (!match) {
-        match = cleanKey.match(ternarySimpleQuoteRegexp);
-      }
-
-      if (match && match.length > 3) {
-        return [match[2], match[3]]
+      var match = cleanKey.match(ternaryRegexp);
+     
+      if (match) {
+        var matches = [];
+        if (match.length >= 3 && match[2]) {
+          matches.push(match[2]);
+        }
+        if (match.length >= 5 && match[4]) {
+          matches.push(match[4]);
+        }
+        return matches
       }
       return null
     };
