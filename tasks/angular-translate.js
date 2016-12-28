@@ -139,6 +139,7 @@ module.exports = function (grunt) {
           var defaultValueByTranslationKey = function (translationKey, translationDefaultValue) {
             if (regexName !== "JavascriptServiceArraySimpleQuote" &&
               regexName !== "JavascriptServiceArrayDoubleQuote") {
+              console.log(typeof translationDefaultValue);
               if (keyAsText === true && typeof translationDefaultValue !== "undefined" && translationDefaultValue.length === 0) {
                 results[translationKey] = translationKey;
               } else {
@@ -151,7 +152,7 @@ module.exports = function (grunt) {
           var ternaryKeys = _extractTernaryKey(translationKey)
           if (ternaryKeys) {
             _.forEach(ternaryKeys, function(v) {
-              defaultValueByTranslationKey(v);
+              defaultValueByTranslationKey(v, translationDefaultValue);
             });
           } else {
             defaultValueByTranslationKey(translationKey, translationDefaultValue);
@@ -197,19 +198,19 @@ module.exports = function (grunt) {
     var _extractTernaryKey = function (key) {
       var delimiterRegexp = new RegExp('(' + escapeRegExp(interpolation.startDelimiter) + ')|(' + escapeRegExp(interpolation.endDelimiter) + ')', 'g')
       
-      
-      var ternaryRegexp = /(?:[^?]*)\?(?:\s*(?:["\']((?:\\.|[^"\\])*)["\']|[a-zA-Z0-9_\-\.]+)\s*):\s*(?:["\']((?:\\.|[^"\\])*)["\']|[a-zA-Z0-9_\-\.]+)\s*/i
+      var ternaryRegexp = /(?:[^?]*)\?(?:\s*(?:(["\'])((?:[^\1])*)\1|[a-zA-Z0-9_\-\.]+)\s*):\s*(?:(["\'])((?:\\.|[^\3])*)\3|[a-zA-Z0-9_\-\.]+)\s*/i
+      //var ternaryRegexp = /(?:[^?]*)\?(?:\s*(?:["\']((?:\\.|[^"\\])*)["\']|[a-zA-Z0-9_\-\.]+)\s*):\s*(?:["\']((?:\\.|[^"\\])*)["\']|[a-zA-Z0-9_\-\.]+)\s*/i
       
       var cleanKey = key.replace(delimiterRegexp, '');
       var match = cleanKey.match(ternaryRegexp);
      
       if (match) {
         var matches = [];
-        if (match.length >= 2 && match[1]) {
-          matches.push(match[1]);
-        }
         if (match.length >= 3 && match[2]) {
           matches.push(match[2]);
+        }
+        if (match.length >= 5 && match[4]) {
+          matches.push(match[4]);
         }
         return matches
       }
