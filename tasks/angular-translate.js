@@ -198,7 +198,7 @@ module.exports = function (grunt) {
       var delimiterRegexp = new RegExp('(' + escapeRegExp(interpolation.startDelimiter) + ')|(' + escapeRegExp(interpolation.endDelimiter) + ')', 'g')
       
       
-      var ternaryRegexp = /(?:[^?]*)\?(?:\s*(?:["\']((?:\\.|[^"\\])*)["\']|[a-zA-Z0-9_\-]+)\s*):\s*(?:["\']((?:\\.|[^"\\])*)["\']|[a-zA-Z0-9_\-]+)\s*/i
+      var ternaryRegexp = /(?:[^?]*)\?(?:\s*(?:["\']((?:\\.|[^"\\])*)["\']|[a-zA-Z0-9_\-\.]+)\s*):\s*(?:["\']((?:\\.|[^"\\])*)["\']|[a-zA-Z0-9_\-\.]+)\s*/i
       
       var cleanKey = key.replace(delimiterRegexp, '');
       var match = cleanKey.match(ternaryRegexp);
