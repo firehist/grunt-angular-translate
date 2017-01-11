@@ -46,7 +46,15 @@ module.exports = function (grunt) {
     // Use to escape some char into regex patterns
     var escapeRegExp = function (str) {
       return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-    }
+    };
+
+    // Escape interpolation characters in the given str
+    var escapeRegExpInterpolation = function (str) {
+      return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\\\\\$&");
+    };
+
+    var escapedInterpolationStartRegex = new RegExp(escapeRegExpInterpolation(interpolation.startDelimiter), 'g'),
+        escapedInterpolationEndRegex = new RegExp(escapeRegExpInterpolation(interpolation.endDelimiter), 'g');
 
     // Extract regex strings from content and feed results object
     var _extractTranslation = function (regexName, regex, content, results) {
@@ -94,19 +102,30 @@ module.exports = function (grunt) {
 
           switch (regexName) {
             case "commentSimpleQuote":
-            case "HtmlFilterSimpleQuote":
             case "JavascriptServiceSimpleQuote":
             case "JavascriptServiceInstantSimpleQuote":
             case "JavascriptFilterSimpleQuote":
-            case "HtmlNgBindHtml":
               translationKey = translationKey.replace(/\\\'/g, "'");
               break;
+            case "HtmlFilterSimpleQuote":
+              translationKey = translationKey.replace(/\\\'/g, "'");
+              translationKey = translationKey.replace(escapedInterpolationStartRegex, interpolation.startDelimiter);
+              translationKey = translationKey.replace(escapedInterpolationEndRegex, interpolation.endDelimiter);
+              break;
+            case "HtmlNgBindHtml":
+              translationKey = translationKey.replace(/\\\'/g, "'");
+              translationKey = translationKey.replace(/&quot;/g, '"');
+              break;
             case "commentDoubleQuote":
-            case "HtmlFilterDoubleQuote":
             case "JavascriptServiceDoubleQuote":
             case "JavascriptServiceInstantDoubleQuote":
             case "JavascriptFilterDoubleQuote":
               translationKey = translationKey.replace(/\\\"/g, '"');
+              break;
+            case "HtmlFilterDoubleQuote":
+              translationKey = translationKey.replace(/\\\"/g, '"');
+              translationKey = translationKey.replace(escapedInterpolationStartRegex, interpolation.startDelimiter);
+              translationKey = translationKey.replace(escapedInterpolationEndRegex, interpolation.endDelimiter);
               break;
             case "JavascriptServiceArraySimpleQuote":
             case "JavascriptServiceArrayDoubleQuote":
@@ -175,7 +194,7 @@ module.exports = function (grunt) {
       HtmlDirectivePluralLast: 'translate="((?:\\\\.|[^"\\\\])*)".*angular-plural-extract="((?:\\\\.|[^"\\\\])*)"',
       HtmlDirectivePluralFirst: 'angular-plural-extract="((?:\\\\.|[^"\\\\])*)".*translate="((?:\\\\.|[^"\\\\])*)"',
       HtmlNgBindHtml: 'ng-bind-html="\\s*\'((?:\\\\.|[^\'\\\\])*)\'\\s*\\|\\s*translate(:.*?)?\\s*"',
-      HtmlNgBindHtmlTernary: 'ng-bind-html="\\s*([^?]*?[^:]*:[^|}]*)\\s*\\|\\s*translate(:.*?)?\\s*"',
+      HtmlNgBindHtmlTernary: 'ng-bind-html="\\s*([^\\"?]*?[^\\":]*:[^\\"|}]*)\\s*\\|\\s*translate(:.*?)?\\s*"',
       JavascriptServiceSimpleQuote: '\\$translate\\(\\s*\'((?:\\\\.|[^\'\\\\])*)\'[^\\)]*\\)',
       JavascriptServiceDoubleQuote: '\\$translate\\(\\s*"((?:\\\\.|[^"\\\\])*)"[^\\)]*\\)',
       JavascriptServiceArraySimpleQuote: '\\$translate\\((?:\\s*(\\[\\s*(?:(?:\'(?:(?:\\.|[^.*\'\\\\])*)\')\\s*,*\\s*)+\\s*\\])\\s*)\\)',
