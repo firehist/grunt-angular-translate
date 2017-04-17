@@ -23,7 +23,7 @@ It will only add keys that were added to the source and remove the
 ones that are not present anymore in the source.
 
 
-##Status
+## Status
 
 [![NPM](https://nodei.co/npm/grunt-angular-translate.png)](https://nodei.co/npm/grunt-angular-translate/)
 
