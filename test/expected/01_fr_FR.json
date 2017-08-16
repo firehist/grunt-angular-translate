@@ -1,5 +1,6 @@
 {
     "HtmlFilterSimpleQuoteOneTimeBinding": null,
+    "HtmlFilterSimpleQuote with {{varName}}": null,
     "HtmlFilterDoubleQuote{} interp\"olation {{xx}}": null,
     "HtmlFilterDoubleQuote{} {{var}}on same line 1/2": null,
     "HtmlFilterDoubleQuote{} on same line 2/2": null,
