@@ -188,7 +188,7 @@ module.exports = function (grunt) {
 
     _.forEach(customRegex, function (regex, key) {
       if (_.isObject(customRegex) && !_.isArray(customRegex)) {
-        regexs[key] = key;
+        regexs[key] = regex;
       } else {
         regexs['others_' + key] = regex;
       }
