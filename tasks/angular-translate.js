@@ -23,6 +23,8 @@ module.exports = function (grunt) {
     if (!_.isArray(this.data.lang) || !this.data.lang.length) {
       grunt.fail('lang parameter is required.');
     }
+    // Check debug parameter
+    var debug = this.data.debug;
 
     // Declare all var from configuration
     var files = _file.expand(this.data.src),
@@ -46,7 +48,15 @@ module.exports = function (grunt) {
     // Use to escape some char into regex patterns
     var escapeRegExp = function (str) {
       return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-    }
+    };
+
+    // Escape interpolation characters in the given str
+    var escapeRegExpInterpolation = function (str) {
+      return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\\\\\$&");
+    };
+
+    var escapedInterpolationStartRegex = new RegExp(escapeRegExpInterpolation(interpolation.startDelimiter), 'g'),
+        escapedInterpolationEndRegex = new RegExp(escapeRegExpInterpolation(interpolation.endDelimiter), 'g');
 
     // Extract regex strings from content and feed results object
     var _extractTranslation = function (regexName, regex, content, results) {
@@ -94,19 +104,31 @@ module.exports = function (grunt) {
 
           switch (regexName) {
             case "commentSimpleQuote":
-            case "HtmlFilterSimpleQuote":
             case "JavascriptServiceSimpleQuote":
             case "JavascriptServiceInstantSimpleQuote":
             case "JavascriptFilterSimpleQuote":
-            case "HtmlNgBindHtml":
               translationKey = translationKey.replace(/\\\'/g, "'");
               break;
+            case "HtmlFilterSimpleQuote":
+              translationKey = translationKey.replace(/\\\'/g, "'");
+              translationKey = translationKey.replace(escapedInterpolationStartRegex, interpolation.startDelimiter);
+              translationKey = translationKey.replace(escapedInterpolationEndRegex, interpolation.endDelimiter);
+              break;
+            case "HtmlNgBindHtml":
+              translationKey = translationKey.replace(/\\\'/g, "'");
+              translationKey = translationKey.replace(/&quot;/g, '"');
+              translationKey = translationKey.replace(/&le;/g, '≤');
+              break;
             case "commentDoubleQuote":
-            case "HtmlFilterDoubleQuote":
             case "JavascriptServiceDoubleQuote":
             case "JavascriptServiceInstantDoubleQuote":
             case "JavascriptFilterDoubleQuote":
               translationKey = translationKey.replace(/\\\"/g, '"');
+              break;
+            case "HtmlFilterDoubleQuote":
+              translationKey = translationKey.replace(/\\\"/g, '"');
+              translationKey = translationKey.replace(escapedInterpolationStartRegex, interpolation.startDelimiter);
+              translationKey = translationKey.replace(escapedInterpolationEndRegex, interpolation.endDelimiter);
               break;
             case "JavascriptServiceArraySimpleQuote":
             case "JavascriptServiceArrayDoubleQuote":
@@ -140,10 +162,14 @@ module.exports = function (grunt) {
           var defaultValueByTranslationKey = function (translationKey, translationDefaultValue) {
             if (regexName !== "JavascriptServiceArraySimpleQuote" &&
               regexName !== "JavascriptServiceArrayDoubleQuote") {
+              var resultKey = translationKey;
+              if (debug) {
+                resultKey = regexName + '_' + translationKey;
+              }
               if (keyAsText === true && translationDefaultValue.length === 0) {
-                results[translationKey] = translationKey;
+                results[resultKey] = translationKey;
               } else {
-                results[translationKey] = translationDefaultValue;
+                results[resultKey] = translationDefaultValue;
               }
             }
           }
@@ -167,15 +193,15 @@ module.exports = function (grunt) {
       commentSimpleQuote: '\\/\\*\\s*i18nextract\\s*\\*\\/\'((?:\\\\.|[^\'\\\\])*)\'',
       commentDoubleQuote: '\\/\\*\\s*i18nextract\\s*\\*\\/"((?:\\\\.|[^"\\\\])*)"',
       HtmlFilterSimpleQuote: escapeRegExp(interpolation.startDelimiter) + '\\s*(?:::)?\'((?:\\\\.|[^\'\\\\])*)\'\\s*\\|\\s*translate(:.*?)?\\s*' + escapeRegExp(interpolation.endDelimiter),
-      HtmlFilterDoubleQuote: escapeRegExp(interpolation.startDelimiter) + '\\s*(?:::)?"((?:\\\\.|[^"\\\\\])*)"\\s*\\|\\s*translate(:.*?)?\\s*' + escapeRegExp(interpolation.endDelimiter),
-      HtmlFilterTernary: escapeRegExp(interpolation.startDelimiter) + '\\s*(?:::)?([^?]*\\?[^:]*:[^|}]*)\\s*\\|\\s*translate(:.*?)?\\s*' + escapeRegExp(interpolation.endDelimiter),
+      HtmlFilterDoubleQuote: escapeRegExp(interpolation.startDelimiter) + '\\s*(?:::)?"((?:\\\\.|[^"\\\\])+)"\\s*\\|\\s*translate(:.*?)?\\s*' + escapeRegExp(interpolation.endDelimiter),
+      HtmlFilterTernary: escapeRegExp(interpolation.startDelimiter) + '\\s*(?:::)?([^?\\n\\r]+\\?[^:\\n\\r]+:[^|}\\n\\r]+)\\s*\\|\\s*translate(:.*?)?\\s*' + escapeRegExp(interpolation.endDelimiter),
       HtmlDirective: '<(?:[^>"]|"(?:[^"]|\\/")*")*\\stranslate(?:>|\\s[^>]*>)([^<]*)',
       HtmlDirectiveSimpleQuote: '<(?:[^>"]|"(?:[^"]|\\/")*")*\\stranslate=\'([^\']*)\'[^>]*>([^<]*)',
       HtmlDirectiveDoubleQuote: '<(?:[^>"]|"(?:[^"]|\\/")*")*\\stranslate="([^"]*)"[^>]*>([^<]*)',
       HtmlDirectivePluralLast: 'translate="((?:\\\\.|[^"\\\\])*)".*angular-plural-extract="((?:\\\\.|[^"\\\\])*)"',
       HtmlDirectivePluralFirst: 'angular-plural-extract="((?:\\\\.|[^"\\\\])*)".*translate="((?:\\\\.|[^"\\\\])*)"',
       HtmlNgBindHtml: 'ng-bind-html="\\s*\'((?:\\\\.|[^\'\\\\])*)\'\\s*\\|\\s*translate(:.*?)?\\s*"',
-      HtmlNgBindHtmlTernary: 'ng-bind-html="\\s*([^?]*?[^:]*:[^|}]*)\\s*\\|\\s*translate(:.*?)?\\s*"',
+      HtmlNgBindHtmlTernary: 'ng-bind-html="\\s*([^\\"?]*?[^\\":]*:[^\\"|}]*)\\s*\\|\\s*translate(:.*?)?\\s*"',
       JavascriptServiceSimpleQuote: '\\$translate\\(\\s*\'((?:\\\\.|[^\'\\\\])*)\'[^\\)]*\\)',
       JavascriptServiceDoubleQuote: '\\$translate\\(\\s*"((?:\\\\.|[^"\\\\])*)"[^\\)]*\\)',
       JavascriptServiceArraySimpleQuote: '\\$translate\\((?:\\s*(\\[\\s*(?:(?:\'(?:(?:\\.|[^.*\'\\\\])*)\')\\s*,*\\s*)+\\s*\\])\\s*)\\)',

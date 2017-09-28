@@ -29,7 +29,22 @@
   One time binding
 -->
 <header style="font-family:'Helvetica Neue'">
+  <div>
+    <img ng-src="{{sectionToTriggerBrokenTernaryRegex || doNotSpanMultipleLines}}">
+    <button message="Are you really <b>sure</b> you want to delete this?">Delete</button>
+    <p style="display: block;">just fulfilling ternary operator</p>
+  </div>
   <h1 style="color:red">{{ ::'HtmlFilterSimpleQuoteOneTimeBinding' | translate }}</h1>
+</header>
+
+<!--
+  TEST CASE - Filter HTML
+  Interpolation: {{ }}
+  Simple quote
+  Variables
+-->
+<header style="font-family:'Helvetica Neue'">
+  <h1 description="{{ 'HtmlFilterSimpleQuote with \{\{varName\}\}' | translate:{varName: 'Variables'} }}">Inspect 'description' attribute</h1>
 </header>
 
 <!--
