@@ -117,6 +117,7 @@ module.exports = function (grunt) {
             case "HtmlNgBindHtml":
               translationKey = translationKey.replace(/\\\'/g, "'");
               translationKey = translationKey.replace(/&quot;/g, '"');
+              translationKey = translationKey.replace(/&le;/g, '≤');
               break;
             case "commentDoubleQuote":
             case "JavascriptServiceDoubleQuote":
