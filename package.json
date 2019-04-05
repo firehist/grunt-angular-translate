@@ -14,8 +14,8 @@
     "node": ">= 0.8.0"
   },
   "devDependencies": {
-    "grunt": "~0.4.0",
-    "grunt-bump": "0.0.13",
+    "grunt": "^0.4.0",
+    "grunt-bump": "^0.0.13",
     "grunt-contrib-clean": "^0.5.0",
     "grunt-contrib-copy": "^0.5.0",
     "grunt-contrib-jshint": "^0.10.0",
@@ -55,7 +55,7 @@
   "dependencies": {
     "flat": "^1.2.0",
     "json-stable-stringify": "^1.0.0",
-    "lodash": "~2.4.1",
+    "lodash": "4.17.11",
     "pofile": "^0.2.12"
   }
 }
